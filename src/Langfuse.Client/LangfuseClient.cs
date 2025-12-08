@@ -1,4 +1,3 @@
-using System.Web;
 using Langfuse.Client.Caching;
 using Langfuse.Client.Prompts;
 using Langfuse.Core;
@@ -86,9 +85,9 @@ public class LangfuseClient : LangfuseHttpClientBase
     /// <summary>
     /// Gets a text prompt by name.
     /// </summary>
-    /// <param name="name">The name of the prompt.</param>
+    /// <param name="name">The name of the prompt. Supports names with spaces and special characters.</param>
     /// <param name="version">Optional specific version number.</param>
-    /// <param name="label">Optional label (e.g., "production", "staging"). Defaults to "production" if neither version nor label is specified.</param>
+    /// <param name="label">Optional label (e.g., "production", "staging"). Defaults to "production" if neither version nor label is specified. Supports labels with spaces.</param>
     /// <param name="fallback">Optional fallback prompt to use if fetch fails.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The text prompt.</returns>
@@ -136,9 +135,9 @@ public class LangfuseClient : LangfuseHttpClientBase
     /// <summary>
     /// Gets a chat prompt by name.
     /// </summary>
-    /// <param name="name">The name of the prompt.</param>
+    /// <param name="name">The name of the prompt. Supports names with spaces and special characters.</param>
     /// <param name="version">Optional specific version number.</param>
-    /// <param name="label">Optional label (e.g., "production", "staging"). Defaults to "production" if neither version nor label is specified.</param>
+    /// <param name="label">Optional label (e.g., "production", "staging"). Defaults to "production" if neither version nor label is specified. Supports labels with spaces.</param>
     /// <param name="fallback">Optional fallback prompt to use if fetch fails.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The chat prompt.</returns>
@@ -203,7 +202,7 @@ public class LangfuseClient : LangfuseHttpClientBase
 
     private static string BuildPromptPath(string name, int? version, string? label)
     {
-        var encodedName = HttpUtility.UrlEncode(name);
+        var encodedName = Uri.EscapeDataString(name);
         var path = $"{LangfuseConstants.PromptsPath}/{encodedName}";
 
         var queryParams = new List<string>();
@@ -215,7 +214,7 @@ public class LangfuseClient : LangfuseHttpClientBase
 
         if (!string.IsNullOrEmpty(label))
         {
-            queryParams.Add($"label={HttpUtility.UrlEncode(label)}");
+            queryParams.Add($"label={Uri.EscapeDataString(label)}");
         }
 
         if (queryParams.Count > 0)
