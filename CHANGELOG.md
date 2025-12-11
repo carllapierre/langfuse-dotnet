@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Nothing
+### Added
+- User Feedback / Scores feature: `CreateScoreAsync()` methods for numeric, boolean, and categorical scores
+- New `ScoreRequest` model for score submission
+- Reorganized documentation into `docs/features/` with dedicated pages for each feature
 
 ## [0.1.0] - 2025-10-07
 
