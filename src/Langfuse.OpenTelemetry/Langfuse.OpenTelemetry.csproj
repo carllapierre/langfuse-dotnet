@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageId>Langfuse.OpenTelemetry</PackageId>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Description>A bridge between .NET OpenTelemetry (OTEL) and Langfuse. Automatically exports OTEL traces to Langfuse with a single line of code.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
