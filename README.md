@@ -13,7 +13,7 @@ Unofficial .NET SDK for [Langfuse](https://langfuse.com) - the open-source LLM e
 | Package | Description | Install |
 |---------|-------------|---------|
 | **Langfuse.OpenTelemetry** | Export OTEL traces to Langfuse | `dotnet add package Langfuse.OpenTelemetry` |
-| **Langfuse.Client** | Prompt management with caching | `dotnet add package Langfuse.Client` |
+| **Langfuse.Client** | Prompt management, user feedback | `dotnet add package Langfuse.Client` |
 | **Langfuse.Core** | Shared config & types (auto-installed) | `dotnet add package Langfuse.Core` |
 
 ---
@@ -83,7 +83,7 @@ var result = await kernel.InvokePromptAsync("Hello!");
 
 ## Langfuse.Client
 
-Access Langfuse features like Prompt Management directly from .NET with built-in caching.
+Access Langfuse features like Prompt Management and User Feedback directly from .NET.
 
 ### Quick Start
 
@@ -130,6 +130,7 @@ var messages = chatPrompt.Compile(("criticlevel", "expert"), ("movie", "Dune 2")
 - **Client-side caching** - 60s TTL by default, configurable
 - **Fallback prompts** - Graceful degradation when API fails
 - **Config access** - Access prompt config (model, temperature, etc.)
+- **User feedback** - Create scores and assign them to traces
 
 ```csharp
 // Get specific version
@@ -145,6 +146,10 @@ var prompt = await client.GetPromptAsync("my-prompt", fallback: fallback);
 // Access config
 var model = prompt.GetConfigValue<string>("model");
 var temperature = prompt.GetConfigValue<double>("temperature", 0.7);
+
+// User feedback / scores
+await client.CreateScoreAsync("trace-id", "user-feedback", value: true);
+await client.CreateScoreAsync("trace-id", "quality", value: 0.95, comment: "Great!");
 ```
 
 ---
@@ -152,7 +157,7 @@ var temperature = prompt.GetConfigValue<double>("temperature", 0.7);
 ## Documentation
 
 - [Testing Guide](docs/TESTING.md) - How to run tests
-- [Features](docs/FEATURES.md) - Implemented features with Langfuse docs links
+- [Features](docs/features/) - Implemented features with Langfuse docs links
 - [Contributing](CONTRIBUTING.md) - How to contribute
 
 ## Running the Sample

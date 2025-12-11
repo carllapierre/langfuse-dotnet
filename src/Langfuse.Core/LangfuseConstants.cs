@@ -49,5 +49,10 @@ public static class LangfuseConstants
     /// Prompts API endpoint path.
     /// </summary>
     public const string PromptsPath = "/api/public/v2/prompts";
+
+    /// <summary>
+    /// Scores API endpoint path.
+    /// </summary>
+    public const string ScoresPath = "/api/public/scores";
 }
 
