@@ -11,6 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User Feedback / Scores feature: `CreateScoreAsync()` methods for numeric, boolean, and categorical scores
 - New `ScoreRequest` model for score submission
 - Reorganized documentation into `docs/features/` with dedicated pages for each feature
+- Support spaces and special characters in prompt management labels/names
+
+## [1.1.0] - 2025-11-26
+
+### Added
+- Release of Client and Core
+- Prompt mangement features
+
+## [1.0.0] - 2025-10-07
+
+### Added
+- Better documentation
+- Official release version 1.0.0
 
 ## [0.1.0] - 2025-10-07
 
@@ -25,8 +38,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Full support for Semantic Kernel GenAI instrumentation
 - Sample application demonstrating Semantic Kernel integration
 
-## [1.0.0] - 2025-10-07
-
-### Added
-- Better documentation
-- Official release version 1.0.0
