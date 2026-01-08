@@ -17,14 +17,15 @@ This document lists the Langfuse features implemented in this unofficial .NET SD
 | [OpenTelemetry Export](../README.md#langfuseopentelemetry) | `Langfuse.OpenTelemetry` | [Langfuse OTEL](https://langfuse.com/docs/integrations/otel) |
 | [Prompt Management](prompt-management.md) | `Langfuse.Client` | [Langfuse Prompts](https://langfuse.com/docs/prompt-management/overview) |
 | [User Feedback / Scores](user-feedback.md) | `Langfuse.Client` | [Langfuse Scores](https://langfuse.com/docs/observability/features/user-feedback) |
+| [Dataset Management](datasets.md) | `Langfuse.Client` | [Langfuse Datasets](https://langfuse.com/docs/evaluation/features/datasets) |
 
 ## Not Yet Implemented
 
 | Feature | Langfuse Docs |
 |---------|---------------|
 | Manual trace/span creation via SDK | [SDK Tracing](https://langfuse.com/docs/observability/sdk/overview) |
-| Dataset management | [Datasets](https://langfuse.com/docs/evaluation/experiments/datasets) |
 | Query traces/observations via SDK | [Query via SDK](https://langfuse.com/docs/api-and-data-platform/features/query-via-sdk) |
+| Dataset runs/experiments | [Experiments via SDK](https://langfuse.com/docs/evaluation/experiments/experiments-via-sdk) |
 
 ## API Reference
 

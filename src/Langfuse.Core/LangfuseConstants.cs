@@ -54,5 +54,20 @@ public static class LangfuseConstants
     /// Scores API endpoint path.
     /// </summary>
     public const string ScoresPath = "/api/public/scores";
+
+    /// <summary>
+    /// Datasets API endpoint path (v2).
+    /// </summary>
+    public const string DatasetsPath = "/api/public/v2/datasets";
+
+    /// <summary>
+    /// Dataset Items API endpoint path.
+    /// </summary>
+    public const string DatasetItemsPath = "/api/public/dataset-items";
+
+    /// <summary>
+    /// Dataset Run Items API endpoint path.
+    /// </summary>
+    public const string DatasetRunItemsPath = "/api/public/dataset-run-items";
 }
 

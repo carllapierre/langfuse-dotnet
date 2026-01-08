@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 1.3.0
+
+### Added
+- Dataset Management API: Full CRUD operations for datasets and dataset items
+  - `CreateDatasetAsync()` - Create or update datasets with optional schema validation
+  - `GetDatasetAsync()` - Retrieve datasets by name
+  - `GetDatasetsAsync()` - List all datasets with pagination
+  - `CreateDatasetItemAsync()` - Add items to datasets with input/output data
+  - `GetDatasetItemAsync()` - Retrieve individual dataset items by ID
+  - `GetDatasetItemsAsync()` - Query dataset items with filtering and pagination
+  - `GetItemsForDatasetAsync()` - Convenience method to get all items for a specific dataset
+- New models: `Dataset`, `DatasetItem`, `PaginatedDatasets`, `PaginatedDatasetItems`, `CreateDatasetRequest`, `CreateDatasetItemRequest`
+- Comprehensive dataset documentation in `docs/features/datasets.md`
+- Integration tests for dataset operations
+
+### Changed
+- Refactored `LangfuseClient` to use partial classes for better code organization by API domain
+  - `LangfuseClient.Prompts.cs` - Prompt management methods
+  - `LangfuseClient.Scores.cs` - Score/feedback methods
+  - `LangfuseClient.Datasets.cs` - Dataset management methods
+
 ## [1.2.0] - 2025-12-10
 
 ### Added

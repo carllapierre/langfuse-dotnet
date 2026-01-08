@@ -13,7 +13,7 @@ Unofficial .NET SDK for [Langfuse](https://langfuse.com) - the open-source LLM e
 | Package | Description | Install |
 |---------|-------------|---------|
 | **Langfuse.OpenTelemetry** | Export OTEL traces to Langfuse | `dotnet add package Langfuse.OpenTelemetry` |
-| **Langfuse.Client** | Prompt management, user feedback | `dotnet add package Langfuse.Client` |
+| **Langfuse.Client** | Prompt management, user feedback, datasets | `dotnet add package Langfuse.Client` |
 | **Langfuse.Core** | Shared config & types (auto-installed) | `dotnet add package Langfuse.Core` |
 
 ---
@@ -83,7 +83,7 @@ var result = await kernel.InvokePromptAsync("Hello!");
 
 ## Langfuse.Client
 
-Access Langfuse features like Prompt Management and User Feedback directly from .NET.
+Access Langfuse features like Prompt Management, User Feedback, and Datasets directly from .NET.
 
 ### Quick Start
 
@@ -99,7 +99,7 @@ LANGFUSE_SECRET_KEY=sk-lf-...
 LANGFUSE_BASE_URL=https://cloud.langfuse.com
 ```
 
-**3. Use prompts**
+**3. Use the client**
 ```csharp
 using Langfuse.Client;
 
@@ -131,6 +131,7 @@ var messages = chatPrompt.Compile(("criticlevel", "expert"), ("movie", "Dune 2")
 - **Fallback prompts** - Graceful degradation when API fails
 - **Config access** - Access prompt config (model, temperature, etc.)
 - **User feedback** - Create scores and assign them to traces
+- **Dataset management** - Create and manage evaluation datasets
 
 ```csharp
 // Get specific version
@@ -150,6 +151,20 @@ var temperature = prompt.GetConfigValue<double>("temperature", 0.7);
 // User feedback / scores
 await client.CreateScoreAsync("trace-id", "user-feedback", value: true);
 await client.CreateScoreAsync("trace-id", "quality", value: 0.95, comment: "Great!");
+
+// Dataset management
+var dataset = await client.CreateDatasetAsync(
+    name: "qa-benchmark",
+    description: "QA testing dataset"
+);
+
+var item = await client.CreateDatasetItemAsync(
+    datasetName: "qa-benchmark",
+    input: new { question = "What is Langfuse?" },
+    expectedOutput: new { answer = "An LLM engineering platform" }
+);
+
+var items = await client.GetItemsForDatasetAsync("qa-benchmark");
 ```
 
 ---
@@ -186,3 +201,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Langfuse Docs](https://langfuse.com/docs) - Official documentation
 - [OpenTelemetry Integration](https://langfuse.com/docs/integrations/otel) - OTEL docs
 - [Prompt Management](https://langfuse.com/docs/prompt-management/overview) - Prompts docs
+- [Datasets](https://langfuse.com/docs/evaluation/features/datasets) - Datasets docs
