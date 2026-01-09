@@ -16,7 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `GetDatasetItemAsync()` - Retrieve individual dataset items by ID
   - `GetDatasetItemsAsync()` - Query dataset items with filtering and pagination
   - `GetItemsForDatasetAsync()` - Convenience method to get all items for a specific dataset
-- New models: `Dataset`, `DatasetItem`, `PaginatedDatasets`, `PaginatedDatasetItems`, `CreateDatasetRequest`, `CreateDatasetItemRequest`
+- New models: `Dataset`, `DatasetItem`, `DatasetRun`, `DatasetRunItem`, `CreateDatasetRequest`, `CreateDatasetItemRequest`, `CreateDatasetRunItemRequest`
+- Dataset Runs/Experiments API for evaluation workflows
+  - `CreateDatasetRunItemAsync()` - Link traces to dataset items within a run
+  - `GetDatasetRunAsync()` - Retrieve dataset runs by name
+  - `GetDatasetRunItemsAsync()` - List run items with pagination
+- Generic `PaginatedResponse<T>` and `PaginationMeta` in `Langfuse.Core` for reusable pagination
 - Comprehensive dataset documentation in `docs/features/datasets.md`
 - Integration tests for dataset operations
 

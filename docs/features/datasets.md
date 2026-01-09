@@ -21,6 +21,9 @@ Manage datasets for testing, evaluation, and benchmarking your LLM applications.
 | JSON Schema validation | Supported | Input/output schemas on datasets |
 | Folder organization | Supported | Use slashes in names (e.g., "evaluation/qa-dataset") |
 | Link to traces | Supported | `sourceTraceId` and `sourceObservationId` |
+| **Dataset runs** | Supported | `CreateDatasetRunItemAsync()` to link traces to items |
+| **Get dataset run** | Supported | `GetDatasetRunAsync()` by dataset and run name |
+| **List run items** | Supported | `GetDatasetRunItemsAsync()` with pagination |
 
 ## Usage
 
@@ -177,6 +180,152 @@ var items = await client.GetDatasetItemsAsync(
 var items = await client.GetDatasetItemsAsync(
     sourceObservationId: "observation-xyz789"
 );
+```
+
+## Running Experiments
+
+Dataset runs allow you to execute your LLM application against dataset items and track the results. Each run item links a trace (from your LLM execution) to a dataset item.
+
+### Basic Experiment Flow
+
+```csharp
+using Langfuse.Client;
+using Langfuse.OpenTelemetry;
+using OpenTelemetry;
+using OpenTelemetry.Trace;
+using System.Diagnostics;
+
+// Setup OpenTelemetry with Langfuse exporter
+using var tracerProvider = Sdk.CreateTracerProviderBuilder()
+    .AddSource("MyApp")
+    .AddLangfuseExporter()
+    .Build();
+
+var activitySource = new ActivitySource("MyApp");
+var client = new LangfuseClient();
+
+// Get dataset items
+var items = await client.GetItemsForDatasetAsync("qa-benchmark");
+
+foreach (var item in items.Data)
+{
+    var input = item.GetInput<QuestionInput>();
+
+    // Run your LLM application (creates a trace via OTEL)
+    using var activity = activitySource.StartActivity("LLM Call");
+    var traceId = activity?.TraceId.ToString();
+
+    // Your LLM logic here...
+    var result = await RunMyLlmApp(input.Question);
+
+    activity?.Stop();
+
+    // Link the trace to the dataset item
+    if (traceId != null)
+    {
+        await client.CreateDatasetRunItemAsync(
+            runName: "experiment-v1",
+            datasetItemId: item.Id,
+            traceId: traceId,
+            runDescription: "Testing GPT-4 on QA benchmark",
+            metadata: new { model = "gpt-4", temperature = 0.7 }
+        );
+    }
+}
+```
+
+### Creating Dataset Run Items
+
+Link a trace to a dataset item within a run:
+
+```csharp
+var runItem = await client.CreateDatasetRunItemAsync(
+    runName: "experiment-v1",           // Run name (creates if doesn't exist)
+    datasetItemId: item.Id,             // Dataset item to link
+    traceId: "trace-abc123",            // Trace ID from your OTEL instrumentation
+    observationId: "obs-xyz789",        // Optional: link to specific span
+    runDescription: "GPT-4 evaluation", // Optional: updates run description
+    metadata: new { model = "gpt-4" }   // Optional: updates run metadata
+);
+
+Console.WriteLine($"Created run item: {runItem.Id}");
+Console.WriteLine($"Run: {runItem.DatasetRunName}");
+```
+
+### Retrieving a Dataset Run
+
+Get a run with all its items:
+
+```csharp
+var run = await client.GetDatasetRunAsync(
+    datasetName: "qa-benchmark",
+    runName: "experiment-v1"
+);
+
+Console.WriteLine($"Run: {run.Name}");
+Console.WriteLine($"Description: {run.Description}");
+Console.WriteLine($"Items: {run.DatasetRunItems.Count}");
+
+foreach (var runItem in run.DatasetRunItems)
+{
+    Console.WriteLine($"  - Item {runItem.DatasetItemId} -> Trace {runItem.TraceId}");
+}
+```
+
+### Listing Run Items with Pagination
+
+```csharp
+// First get the dataset to obtain its ID
+var dataset = await client.GetDatasetAsync("qa-benchmark");
+
+// Then list run items
+var result = await client.GetDatasetRunItemsAsync(
+    datasetId: dataset.Id,
+    runName: "experiment-v1",
+    page: 1,
+    limit: 50
+);
+
+foreach (var runItem in result.Data)
+{
+    Console.WriteLine($"Item: {runItem.DatasetItemId}");
+    Console.WriteLine($"Trace: {runItem.TraceId}");
+    Console.WriteLine($"Created: {runItem.CreatedAt}");
+}
+
+Console.WriteLine($"Total: {result.Meta.TotalItems} items");
+```
+
+### Comparing Multiple Runs
+
+```csharp
+// Run experiment with different configurations
+var configs = new[]
+{
+    ("gpt-4-run", "gpt-4", 0.7),
+    ("gpt-3.5-run", "gpt-3.5-turbo", 0.7),
+    ("gpt-4-creative", "gpt-4", 1.0)
+};
+
+foreach (var (runName, model, temperature) in configs)
+{
+    var items = await client.GetItemsForDatasetAsync("qa-benchmark");
+
+    foreach (var item in items.Data)
+    {
+        // Run with specific config
+        var (result, traceId) = await RunLlmWithConfig(item, model, temperature);
+
+        await client.CreateDatasetRunItemAsync(
+            runName: runName,
+            datasetItemId: item.Id,
+            traceId: traceId,
+            metadata: new { model, temperature }
+        );
+    }
+}
+
+// View results in Langfuse dashboard
 ```
 
 ### Getting a Specific Item

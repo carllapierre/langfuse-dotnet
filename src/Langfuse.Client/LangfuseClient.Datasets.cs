@@ -82,13 +82,13 @@ public partial class LangfuseClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Paginated list of datasets.</returns>
     /// <exception cref="LangfuseApiException">Thrown when the API request fails.</exception>
-    public async Task<PaginatedDatasets> GetDatasetsAsync(
+    public async Task<PaginatedResponse<Dataset>> GetDatasetsAsync(
         int page = 1,
         int limit = 50,
         CancellationToken cancellationToken = default)
     {
         var path = $"{LangfuseConstants.DatasetsPath}?page={page}&limit={limit}";
-        var result = await GetAsync<PaginatedDatasets>(path, cancellationToken);
+        var result = await GetAsync<PaginatedResponse<Dataset>>(path, cancellationToken);
 
         Logger.LogDebug("Retrieved {Count} datasets (page {Page})", result.Data.Count, page);
         return result;
@@ -176,7 +176,7 @@ public partial class LangfuseClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Paginated list of dataset items.</returns>
     /// <exception cref="LangfuseApiException">Thrown when the API request fails.</exception>
-    public async Task<PaginatedDatasetItems> GetDatasetItemsAsync(
+    public async Task<PaginatedResponse<DatasetItem>> GetDatasetItemsAsync(
         string? datasetName = null,
         string? sourceTraceId = null,
         string? sourceObservationId = null,
@@ -206,7 +206,7 @@ public partial class LangfuseClient
         }
 
         var path = $"{LangfuseConstants.DatasetItemsPath}?{string.Join("&", queryParams)}";
-        var result = await GetAsync<PaginatedDatasetItems>(path, cancellationToken);
+        var result = await GetAsync<PaginatedResponse<DatasetItem>>(path, cancellationToken);
 
         Logger.LogDebug("Retrieved {Count} dataset items (page {Page})", result.Data.Count, page);
         return result;
@@ -222,7 +222,7 @@ public partial class LangfuseClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Paginated list of dataset items.</returns>
     /// <exception cref="LangfuseApiException">Thrown when the API request fails.</exception>
-    public Task<PaginatedDatasetItems> GetItemsForDatasetAsync(
+    public Task<PaginatedResponse<DatasetItem>> GetItemsForDatasetAsync(
         string datasetName,
         int page = 1,
         int limit = 50,
@@ -230,6 +230,119 @@ public partial class LangfuseClient
     {
         ArgumentNullException.ThrowIfNull(datasetName);
         return GetDatasetItemsAsync(datasetName, null, null, page, limit, cancellationToken);
+    }
+
+    #endregion
+
+    #region Dataset Run Operations
+
+    /// <summary>
+    /// Creates a dataset run item, linking a trace to a dataset item within a run.
+    /// If a run with the specified name doesn't exist, it will be created automatically.
+    /// </summary>
+    /// <param name="runName">The name of the run. Creates the run if it doesn't exist.</param>
+    /// <param name="datasetItemId">The ID of the dataset item to link.</param>
+    /// <param name="traceId">The ID of the trace to link.</param>
+    /// <param name="observationId">Optional observation ID to link to a specific span/generation.</param>
+    /// <param name="runDescription">Optional description for the run. Updates the run if it exists.</param>
+    /// <param name="metadata">Optional metadata for the run. Updates the run if it exists.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The created dataset run item.</returns>
+    /// <exception cref="LangfuseApiException">Thrown when the API request fails.</exception>
+    public async Task<DatasetRunItem> CreateDatasetRunItemAsync(
+        string runName,
+        string datasetItemId,
+        string traceId,
+        string? observationId = null,
+        string? runDescription = null,
+        object? metadata = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(runName);
+        ArgumentNullException.ThrowIfNull(datasetItemId);
+        ArgumentNullException.ThrowIfNull(traceId);
+
+        var request = new CreateDatasetRunItemRequest
+        {
+            RunName = runName,
+            DatasetItemId = datasetItemId,
+            TraceId = traceId,
+            ObservationId = observationId,
+            RunDescription = runDescription,
+            Metadata = SerializeToElement(metadata)
+        };
+
+        var result = await PostAsync<CreateDatasetRunItemRequest, DatasetRunItem>(
+            LangfuseConstants.DatasetRunItemsPath,
+            request,
+            cancellationToken);
+
+        Logger.LogDebug("Created dataset run item {Id} in run '{RunName}' for item {DatasetItemId}",
+            result.Id, runName, datasetItemId);
+        return result;
+    }
+
+    /// <summary>
+    /// Gets a dataset run by dataset name and run name.
+    /// </summary>
+    /// <param name="datasetName">The name of the dataset.</param>
+    /// <param name="runName">The name of the run.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The dataset run with its items.</returns>
+    /// <exception cref="LangfuseApiException">Thrown when the API request fails or run is not found.</exception>
+    public async Task<DatasetRunWithItems> GetDatasetRunAsync(
+        string datasetName,
+        string runName,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(datasetName);
+        ArgumentNullException.ThrowIfNull(runName);
+
+        var encodedDatasetName = Uri.EscapeDataString(datasetName);
+        var encodedRunName = Uri.EscapeDataString(runName);
+        var path = $"{LangfuseConstants.DatasetRunsBasePath}/{encodedDatasetName}/runs/{encodedRunName}";
+
+        var result = await GetAsync<DatasetRunWithItems>(path, cancellationToken);
+
+        Logger.LogDebug("Retrieved dataset run '{RunName}' for dataset '{DatasetName}' with {ItemCount} items",
+            runName, datasetName, result.DatasetRunItems.Count);
+        return result;
+    }
+
+    /// <summary>
+    /// Gets dataset run items with pagination.
+    /// </summary>
+    /// <param name="datasetId">The ID of the dataset.</param>
+    /// <param name="runName">The name of the run.</param>
+    /// <param name="page">Page number (1-indexed). Default: 1.</param>
+    /// <param name="limit">Maximum number of items per page. Default: 50.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Paginated list of dataset run items.</returns>
+    /// <exception cref="LangfuseApiException">Thrown when the API request fails.</exception>
+    public async Task<PaginatedResponse<DatasetRunItem>> GetDatasetRunItemsAsync(
+        string datasetId,
+        string runName,
+        int page = 1,
+        int limit = 50,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(datasetId);
+        ArgumentNullException.ThrowIfNull(runName);
+
+        var queryParams = new List<string>
+        {
+            $"datasetId={Uri.EscapeDataString(datasetId)}",
+            $"runName={Uri.EscapeDataString(runName)}",
+            $"page={page}",
+            $"limit={limit}"
+        };
+
+        var path = $"{LangfuseConstants.DatasetRunItemsPath}?{string.Join("&", queryParams)}";
+        var result = await GetAsync<PaginatedResponse<DatasetRunItem>>(path, cancellationToken);
+
+        Logger.LogDebug("Retrieved {Count} dataset run items for run '{RunName}' (page {Page})",
+            result.Data.Count, runName, page);
+        return result;
     }
 
     #endregion

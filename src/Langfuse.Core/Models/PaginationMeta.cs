@@ -1,24 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Langfuse.Client.Datasets;
-
-/// <summary>
-/// Paginated response containing dataset items.
-/// </summary>
-public class PaginatedDatasetItems
-{
-    /// <summary>
-    /// The list of dataset items for the current page.
-    /// </summary>
-    [JsonPropertyName("data")]
-    public List<DatasetItem> Data { get; set; } = new();
-
-    /// <summary>
-    /// Pagination metadata.
-    /// </summary>
-    [JsonPropertyName("meta")]
-    public PaginationMeta Meta { get; set; } = new();
-}
+namespace Langfuse.Core;
 
 /// <summary>
 /// Pagination metadata for list responses.
@@ -59,4 +41,3 @@ public class PaginationMeta
     /// </summary>
     public bool HasPreviousPage => Page > 1;
 }
-

@@ -69,5 +69,11 @@ public static class LangfuseConstants
     /// Dataset Run Items API endpoint path.
     /// </summary>
     public const string DatasetRunItemsPath = "/api/public/dataset-run-items";
+
+    /// <summary>
+    /// Dataset Runs API base path (note: uses v1 API, not v2).
+    /// Format: /api/public/datasets/{datasetName}/runs/{runName}
+    /// </summary>
+    public const string DatasetRunsBasePath = "/api/public/datasets";
 }
 

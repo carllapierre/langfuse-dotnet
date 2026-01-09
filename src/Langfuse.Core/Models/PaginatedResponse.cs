@@ -1,17 +1,18 @@
 using System.Text.Json.Serialization;
 
-namespace Langfuse.Client.Datasets;
+namespace Langfuse.Core;
 
 /// <summary>
-/// Paginated response containing datasets.
+/// Generic paginated response wrapper for list API endpoints.
 /// </summary>
-public class PaginatedDatasets
+/// <typeparam name="T">The type of items in the response.</typeparam>
+public class PaginatedResponse<T>
 {
     /// <summary>
-    /// The list of datasets for the current page.
+    /// The list of items for the current page.
     /// </summary>
     [JsonPropertyName("data")]
-    public List<Dataset> Data { get; set; } = new();
+    public List<T> Data { get; set; } = new();
 
     /// <summary>
     /// Pagination metadata.
@@ -19,4 +20,3 @@ public class PaginatedDatasets
     [JsonPropertyName("meta")]
     public PaginationMeta Meta { get; set; } = new();
 }
-
