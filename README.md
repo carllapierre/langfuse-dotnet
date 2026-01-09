@@ -1,4 +1,4 @@
-# Langfuse .NET SDK (Unofficial)
+# Langfuse .NET SDK (Unofficial) 🪢
 
 [![Langfuse.OpenTelemetry](https://img.shields.io/nuget/v/Langfuse.OpenTelemetry.svg?label=Langfuse.OpenTelemetry)](https://www.nuget.org/packages/Langfuse.OpenTelemetry/)
 [![Langfuse.Client](https://img.shields.io/nuget/v/Langfuse.Client.svg?label=Langfuse.Client)](https://www.nuget.org/packages/Langfuse.Client/)
