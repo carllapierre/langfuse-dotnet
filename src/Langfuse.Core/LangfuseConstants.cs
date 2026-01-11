@@ -43,42 +43,42 @@ public static class LangfuseConstants
     /// <summary>
     /// OTEL traces endpoint path.
     /// </summary>
-    public const string OtelTracesPath = "/api/public/otel/v1/traces";
+    public const string OtelTracesPath = ApiPublicPath + "/otel/v1/traces";
 
     /// <summary>
     /// Prompts API endpoint path.
     /// </summary>
-    public const string PromptsPath = "/api/public/v2/prompts";
+    public const string PromptsPath = ApiPublicPath + "/v2/prompts";
 
     /// <summary>
     /// Scores API endpoint path.
     /// </summary>
-    public const string ScoresPath = "/api/public/scores";
+    public const string ScoresPath = ApiPublicPath + "/scores";
 
     /// <summary>
     /// Traces API endpoint path.
     /// </summary>
-    public const string TracesPath = "/api/public/traces";
+    public const string TracesPath = ApiPublicPath + "/traces";
 
     /// <summary>
     /// Datasets API endpoint path (v2).
     /// </summary>
-    public const string DatasetsPath = "/api/public/v2/datasets";
+    public const string DatasetsPath = ApiPublicPath + "/v2/datasets";
 
     /// <summary>
     /// Dataset Items API endpoint path.
     /// </summary>
-    public const string DatasetItemsPath = "/api/public/dataset-items";
+    public const string DatasetItemsPath = ApiPublicPath + "/dataset-items";
 
     /// <summary>
     /// Dataset Run Items API endpoint path.
     /// </summary>
-    public const string DatasetRunItemsPath = "/api/public/dataset-run-items";
+    public const string DatasetRunItemsPath = ApiPublicPath + "/dataset-run-items";
 
     /// <summary>
     /// Dataset Runs API base path (note: uses v1 API, not v2).
     /// Format: /api/public/datasets/{datasetName}/runs/{runName}
     /// </summary>
-    public const string DatasetRunsBasePath = "/api/public/datasets";
+    public const string DatasetRunsBasePath = ApiPublicPath + "/datasets";
 }
 
