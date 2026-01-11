@@ -15,6 +15,7 @@ Unofficial .NET SDK for [Langfuse](https://langfuse.com) - the open-source LLM e
 | **OpenTelemetry Tracing** | Export .NET OTEL traces to Langfuse | [OTEL Integration](https://langfuse.com/docs/integrations/otel) |
 | **Prompt Management** | Fetch, compile, and cache text & chat prompts | [Prompt Management](https://langfuse.com/docs/prompts/get-started) |
 | **Scores** | Create user feedback and evaluation scores | [Scores](https://langfuse.com/docs/scores/overview) |
+| **Trace Management** | List, get, and delete traces via API | [Public API](https://langfuse.com/docs/api-and-data-platform/features/public-api) |
 | **Datasets** | Create and manage evaluation datasets | [Datasets](https://langfuse.com/docs/datasets/overview) |
 | **Experiments** | Log agent runs with datasets | [Experiments](https://langfuse.com/docs/datasets/overview) |
 
@@ -25,7 +26,7 @@ Unofficial .NET SDK for [Langfuse](https://langfuse.com) - the open-source LLM e
 | Package | Description | Install |
 |---------|-------------|---------|
 | **Langfuse.OpenTelemetry** | Export OTEL traces to Langfuse | `dotnet add package Langfuse.OpenTelemetry` |
-| **Langfuse.Client** | Prompt management, scores, datasets, experiments | `dotnet add package Langfuse.Client` |
+| **Langfuse.Client** | Prompt management, scores, traces, datasets, experiments | `dotnet add package Langfuse.Client` |
 | **Langfuse.Core** | Shared config & types (auto-installed) | `dotnet add package Langfuse.Core` |
 
 ---

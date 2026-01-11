@@ -131,6 +131,34 @@ public abstract class LangfuseHttpClientBase : IDisposable
         await EnsureSuccessAsync(response, cancellationToken);
     }
 
+    /// <summary>
+    /// Sends a DELETE request (no response body expected).
+    /// </summary>
+    protected async Task DeleteAsync(string path, CancellationToken cancellationToken = default)
+    {
+        Logger.LogDebug("DELETE {Path}", path);
+
+        using var response = await _httpClient.DeleteAsync(path, cancellationToken);
+        await EnsureSuccessAsync(response, cancellationToken);
+    }
+
+    /// <summary>
+    /// Sends a DELETE request with JSON body and deserializes the response.
+    /// </summary>
+    protected async Task<TResponse> DeleteWithBodyAsync<TRequest, TResponse>(
+        string path,
+        TRequest body,
+        CancellationToken cancellationToken = default)
+    {
+        Logger.LogDebug("DELETE {Path}", path);
+
+        var json = JsonSerializer.Serialize(body, JsonOptions);
+        using var content = new StringContent(json, Encoding.UTF8, "application/json");
+        using var request = new HttpRequestMessage(HttpMethod.Delete, path) { Content = content };
+        using var response = await _httpClient.SendAsync(request, cancellationToken);
+        return await HandleResponseAsync<TResponse>(response, cancellationToken);
+    }
+
     private async Task<T> HandleResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
     {
         await EnsureSuccessAsync(response, cancellationToken);

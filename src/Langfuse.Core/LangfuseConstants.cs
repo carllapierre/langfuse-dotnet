@@ -56,6 +56,11 @@ public static class LangfuseConstants
     public const string ScoresPath = "/api/public/scores";
 
     /// <summary>
+    /// Traces API endpoint path.
+    /// </summary>
+    public const string TracesPath = "/api/public/traces";
+
+    /// <summary>
     /// Datasets API endpoint path (v2).
     /// </summary>
     public const string DatasetsPath = "/api/public/v2/datasets";
