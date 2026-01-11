@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-01-10
+
+### Added
+- Trace Management API: List, retrieve, and delete traces via the Langfuse API
+  - `GetTracesAsync()` - List traces with pagination and filtering (userId, name, sessionId, tags, timestamps, etc.)
+  - `GetTraceAsync()` - Retrieve a single trace with full details including observations and scores
+  - `DeleteTraceAsync()` - Delete a single trace by ID
+  - `DeleteTracesAsync()` - Delete multiple traces by IDs
+- New trace models: `Trace`, `TraceWithDetails`, `TraceWithFullDetails`, `Observation`, `ObservationUsage`
+- `Score` response model in Scores domain for reading score data from API responses
+- `DeleteAsync` and `DeleteWithBodyAsync` methods in `LangfuseHttpClientBase` for DELETE operations
+- Added `LangfuseClient.Traces.cs` partial class for trace management methods
+
+### Changed
+- Refactored `LangfuseConstants` to use `ApiPublicPath` constant as base for all API endpoint paths (DRY improvement)
+
 ## [1.3.0] - 2025-01-09
 
 ### Added
