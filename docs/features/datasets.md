@@ -23,6 +23,7 @@ Manage datasets for testing, evaluation, and benchmarking your LLM applications.
 | Link to traces | Supported | `sourceTraceId` and `sourceObservationId` |
 | **Dataset runs** | Supported | `CreateDatasetRunItemAsync()` to link traces to items |
 | **Get dataset run** | Supported | `GetDatasetRunAsync()` by dataset and run name |
+| **List dataset runs** | Supported | `GetDatasetRunsAsync()` with pagination |
 | **List run items** | Supported | `GetDatasetRunItemsAsync()` with pagination |
 
 ## Usage
@@ -269,6 +270,51 @@ Console.WriteLine($"Items: {run.DatasetRunItems.Count}");
 foreach (var runItem in run.DatasetRunItems)
 {
     Console.WriteLine($"  - Item {runItem.DatasetItemId} -> Trace {runItem.TraceId}");
+}
+```
+
+### Listing All Runs for a Dataset
+
+Get all runs for a dataset with pagination:
+
+```csharp
+var runs = await client.GetDatasetRunsAsync(
+    datasetName: "qa-benchmark",
+    page: 1,
+    limit: 50
+);
+
+foreach (var run in runs.Data)
+{
+    Console.WriteLine($"Run: {run.Name}");
+    Console.WriteLine($"Description: {run.Description}");
+    Console.WriteLine($"Created: {run.CreatedAt}");
+}
+
+Console.WriteLine($"Total: {runs.Meta.TotalItems} runs");
+```
+
+### Getting the Latest Run
+
+To get the most recent run for a dataset:
+
+```csharp
+var runs = await client.GetDatasetRunsAsync(
+    datasetName: "qa-benchmark",
+    page: 1,
+    limit: 1
+);
+
+if (runs.Data.Count > 0)
+{
+    var latestRun = runs.Data[0];
+    Console.WriteLine($"Latest run: {latestRun.Name}");
+    
+    // Get full run details with items
+    var runWithItems = await client.GetDatasetRunAsync(
+        datasetName: "qa-benchmark",
+        runName: latestRun.Name
+    );
 }
 ```
 

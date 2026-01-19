@@ -446,6 +446,94 @@ public class DatasetIntegrationTests : IDisposable
         }
     }
 
+    [SkippableFact]
+    public async Task GetDatasetRuns_WithPagination_ReturnsRuns()
+    {
+        Skip.If(_skipTests, "No Langfuse configuration found.");
+
+        var datasetName = $"integration-test-listruns-{Guid.NewGuid():N}";
+        var runName1 = $"test-run-1-{Guid.NewGuid():N}";
+        var runName2 = $"test-run-2-{Guid.NewGuid():N}";
+        _createdDatasetNames.Add(datasetName);
+
+        try
+        {
+            // Create dataset and item
+            await _client!.CreateDatasetAsync(name: datasetName);
+            var item = await _client!.CreateDatasetItemAsync(
+                datasetName: datasetName,
+                input: new { question = "Test question" }
+            );
+
+            // Create two runs by creating run items - note: uses synthetic trace IDs
+            var traceId1 = Guid.NewGuid().ToString();
+            await _client!.CreateDatasetRunItemAsync(
+                runName: runName1,
+                datasetItemId: item.Id,
+                traceId: traceId1
+            );
+
+            var traceId2 = Guid.NewGuid().ToString();
+            await _client!.CreateDatasetRunItemAsync(
+                runName: runName2,
+                datasetItemId: item.Id,
+                traceId: traceId2
+            );
+
+            // Allow time for eventual consistency
+            await Task.Delay(500);
+
+            // List all runs for the dataset
+            var result = await _client!.GetDatasetRunsAsync(
+                datasetName: datasetName,
+                page: 1,
+                limit: 50
+            );
+
+            Assert.NotNull(result);
+            Assert.NotNull(result.Data);
+            Assert.NotNull(result.Meta);
+            Assert.Equal(1, result.Meta.Page);
+            Assert.True(result.Data.Count >= 2, $"Expected at least 2 runs, got {result.Data.Count}");
+            Assert.Contains(result.Data, r => r.Name == runName1);
+            Assert.Contains(result.Data, r => r.Name == runName2);
+        }
+        catch (LangfuseApiException ex) when (ex.StatusCode == 401)
+        {
+            Assert.Fail($"Authentication failed against {_environment}. Check your API keys.");
+        }
+    }
+
+    [SkippableFact]
+    public async Task GetDatasetRuns_EmptyDataset_ReturnsEmptyList()
+    {
+        Skip.If(_skipTests, "No Langfuse configuration found.");
+
+        var datasetName = $"integration-test-emptyruns-{Guid.NewGuid():N}";
+        _createdDatasetNames.Add(datasetName);
+
+        try
+        {
+            // Create dataset without any runs
+            await _client!.CreateDatasetAsync(name: datasetName);
+
+            // List runs for the dataset (should be empty)
+            var result = await _client!.GetDatasetRunsAsync(
+                datasetName: datasetName,
+                page: 1,
+                limit: 50
+            );
+
+            Assert.NotNull(result);
+            Assert.NotNull(result.Data);
+            Assert.Empty(result.Data);
+        }
+        catch (LangfuseApiException ex) when (ex.StatusCode == 401)
+        {
+            Assert.Fail($"Authentication failed against {_environment}. Check your API keys.");
+        }
+    }
+
     #endregion
 
     #region End-to-End Tests with Real Traces

@@ -310,6 +310,33 @@ public partial class LangfuseClient
     }
 
     /// <summary>
+    /// Gets all runs for a dataset with pagination.
+    /// </summary>
+    /// <param name="datasetName">The name of the dataset.</param>
+    /// <param name="page">Page number (1-indexed). Default: 1.</param>
+    /// <param name="limit">Maximum number of runs per page. Default: 50.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Paginated list of dataset runs.</returns>
+    /// <exception cref="LangfuseApiException">Thrown when the API request fails.</exception>
+    public async Task<PaginatedResponse<DatasetRun>> GetDatasetRunsAsync(
+        string datasetName,
+        int page = 1,
+        int limit = 50,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(datasetName);
+
+        var encodedDatasetName = Uri.EscapeDataString(datasetName);
+        var path = $"{LangfuseConstants.DatasetRunsBasePath}/{encodedDatasetName}/runs?page={page}&limit={limit}";
+
+        var result = await GetAsync<PaginatedResponse<DatasetRun>>(path, cancellationToken);
+
+        Logger.LogDebug("Retrieved {Count} dataset runs for dataset '{DatasetName}' (page {Page})",
+            result.Data.Count, datasetName, page);
+        return result;
+    }
+
+    /// <summary>
     /// Gets dataset run items with pagination.
     /// </summary>
     /// <param name="datasetId">The ID of the dataset.</param>
